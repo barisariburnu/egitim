@@ -1,48 +1,265 @@
-## SELECT Kullanımları
+# CREATE
+
 ```sql
--- Her ilçede kaç tane mahalle var?
+
+CREATE TABLE users (
+	id INTEGER,
+	firstname VARCHAR2(30) NOT NULL,
+	lastname VARCHAR2(30) NOT NULL,
+	email VARCHAR2(50)
+);
+```
+
+# ALTER
+```sql
+ALTER TABLE users ADD phone VARCHAR(11);
+```
+
+# DROP
+```sql
+DROP TABLE users;
+```  
+  
+# INSERT
+
+```sql
+INSERT INTO users (firstname, lastname, email) 
+	VALUES ('Barış', 'Arıburnu', 'baris.ariburnu@sqltest.net',);
+
+INSERT INTO users (firstname, lastname, email) 
+	VALUES ('Görkem Ege', 'Arıburnu', 'gege.ariburnu@sqltest.net');
+```
+
+# INSERT  INTO
+
+```sql
+INSERT INTO departments (dept_id, dept_name) 
+	VALUES (6, "CBS");
+
+INSERT INTO employees 
+	VALUES (11, "Barış", 2016-02-15, 1850, 6);
+
+INSERT INTO employees (emp_id, emp_name, hire_date, salary) 
+	VALUES (12, "Görkem Ege", 2020-04-15, 10000);
+```
+
+  
+
+# UPDATE
+
+```sql
+UPDATE employees SET dept_id = 2 WHERE emp_id = 12;
+UPDATE employees SET dept_id = 1;
+```
+
+# DELETE
+```sql
+DELETE FROM employees WHERE emp_id = 10;
+DELETE FROM employees;
+```
+
+# DISTINCT
+
+```sql
+SELECT DISTINCT dept_id FROM employees;
+```
+
+# WHERE
+```sql
+SELECT * FROM employees WHERE salary > 5000;
+```
+
+# AND
+```sql
+SELECT * FROM employees WHERE salary > 6000 and dept_id = 1;
+```
+
+# OR
+```sql
+SELECT * FROM employees WHERE salary < 5000 or salary > 7000;
+```
+
+# NOT
+```sql
+SELECT * FROM employees WHERE dept_id != "null";
+SELECT * FROM employees WHERE NOT dept_id = "null";
+```
+
+# ORDER BY
+```sql
+SELECT * FROM employees ORDER BY salary;
+SELECT * FROM employees ORDER BY salary ASC;
+SELECT * FROM employees ORDER BY salary DESC;
+```
+
+# NULL
+```sql
+SELECT * FROM employees WHERE dept_id IS NOT NULL;
+SELECT * FROM employees WHERE dept_id IS NULL;
+```
+
+# SELECT  TOP
+```sql
+SELECT TOP 1 * FROM employees; -- SQL Server / MS Access
+SELECT * FROM employees LIMIT 1; -- MySQL
+SELECT * FROM employees FETCH FIRST 1 ROWS ONLY; -- Oracle
+```
+
+# MIN
+```sql
+SELECT MIN(salary) FROM employees;
+```
+
+# MAX
+```sql
+SELECT MAX(salary) FROM employees;
+```
+
+# AVG
+```sql
+SELECT AVG(salary) FROM employees;
+```
+
+# SUM
+
+```sql
+SELECT SUM(salary) FROM employees;
+```
+
+# COUNT
+```sql
+SELECT COUNT(1) FROM employees;
+```
+
+# LIKE
+```sql
+SELECT * FROM suppliers WHERE city LIKE 'M%';
+SELECT * FROM suppliers WHERE city LIKE '%E';
+SELECT * FROM suppliers WHERE city LIKE 'M_L%E';
+```
+
+# IN
+```sql
+SELECT * FROM suppliers WHERE city IN ('Manchester', 'Melbourne');
+```
+
+# BETWEEN
+```sql
+SELECT * FROM employees WHERE salary BETWEEN 4000 and 5000;
+```
+
+# ALIASES
+```sql
+SELECT e.emp_name FROM employees AS e;
+```
+
+# INNER JOIN
+```sql
+SELECT e.emp_name, dept_name FROM employees e 
+	INNER JOIN departments d on d.dept_id = e.dept_id;
+```
+
+# LEFT JOIN
+```sql
+SELECT e.emp_name, dept_name FROM employees e 
+	LEFT JOIN departments d on d.dept_id = e.dept_id;
+```
+
+# RIGHT JOIN
+```sql
+SELECT e.emp_name, dept_name FROM employees e 
+	RIGHT JOIN departments d on d.dept_id = e.dept_id;
+```
+
+# FULL OUTER JOIN
+```sql
+SELECT e.emp_name, dept_name FROM employees e 
+	FULL OUTER JOIN departments d on d.dept_id = e.dept_id;
+```
+
+# SELF  JOIN
+```sql
+SELECT e.emp_name, dept_name FROM employees e, departments d 
+	WHERE d.dept_id = e.dept_id;
+```
+
+# UNION
+```sql
+SELECT City FROM Customers 
+UNION 
+SELECT City FROM Suppliers ORDER BY City;
+```
+ 
+# UNION ALL
+
+```sql
+SELECT City FROM Customers 
+UNION ALL 
+SELECT City FROM Suppliers ORDER BY City;
+```
+ 
+# GROUP BY
+
+```sql
+SELECT city, count(1) total 
+FROM suppliers 
+GROUP BY city;
+
+SELECT city, count(1) total 
+FROM suppliers 
+GROUP BY city 
+ORDER BY COUNT(1) DESC;
+```
+
+# HAVING
+```sql
+SELECT city, count(1) total 
+FROM suppliers 
+GROUP BY city 
+HAVING city LIKE 'M%';
+```
+
+# EXISTS
+
+```sql
+SELECT supplier_name 
+FROM suppliers s 
+WHERE EXISTS (
+	SELECT product_name FROM products p WHERE p.supplier_id = s.supplier_id AND p.price < 20
+);
+```
+
+# INSERT  INTO  SELECT
+```sql
+INSERT INTO customers (cust_name, city, country, address) 
+	SELECT supplier_name, city, country, address FROM suppliers;
+```
+  
+# CASE
+```sql
 SELECT 
-    I.KIMLIKNO "ILCE KIMLIK NO", 
-    I.AD "ILCE ADI", 
-    M.KIMLIKNO "MAHALLE KIMLIK NO", 
-    M.AD "MAHALLE ADI" 
-FROM ILCE I
-    INNER JOIN MAHALLE M ON M.ILCEID = I.ID;
+	CASE 
+		WHEN country IN ('Germany', 'Spain', 'France') THEN 'Europe' 
+		ELSE 'Unknown' 
+	END; 
+FROM suppliers;
+```
 
--- Her ilçenin yüz ölçümü nedir?
-SELECT AD, SDO_GEOM.SDO_AREA(SHAPE, 0.005) "YUZ OLCUMU" FROM ILCE;
+# NULL
 
--- Bursa'daki tüm ilçelerin yüz ölçümü toplamı nedir?
-SELECT SUM(SDO_GEOM.SDO_AREA(SHAPE, 0.005)) "YUZ OLCUMU" FROM ILCE
+```sql
+SELECT emp_name, IFNULL(dept_id, 0) dept_id FROM employees; -- MySQL
 
--- Hangi ilçenin kaç tane mahallesi vardır?
-SELECT  
-    I.AD "ILCE ADI", 
-    COUNT(1)
-FROM ILCE I
-    INNER JOIN MAHALLE M ON M.ILCEID = I.ID
-GROUP BY I.AD;
+SELECT emp_name, ISNULL(dept_id, 0) dept_id FROM employees; -- SQL Server
 
--- MAKS Yol Gösterim
-SELECT 
-	YOHY.OBJECTID,
-    Y.ID,
-    Y.AD,
-    Y.TIP,
-    I.ID ILCE_ID,
-    I.KIMLIKNO ILCE_KIMLIK_NO,
-    I.AD ILCE_AD,
-    M.ID MAHALLE_ID,
-    M.KIMLIKNO MAHALLE_KIMLIK_NO,
-    M.AD MAHALLE_AD,
-    YOH.SHAPE SHAPE
-FROM ILCE I
-    INNER JOIN MAHALLE M ON I.ID = M.ILCEID
-    INNER JOIN YOLORTAHATYON YOHY ON M.ID = YOHY.MAHALLEID
-    INNER JOIN YOLORTAHAT YOH ON YOHY.YOLORTAHATID = YOH.ID
-    INNER JOIN YOL Y ON YOH.YOLID = Y.ID;
+SELECT emp_name, IsNull(dept_id, 0) dept_id FROM employees; -- MS Access
 
--- MERGE INTO
+SELECT emp_name, NVL(dept_id, 0) dept_id FROM employees; -- Oracle
+```
+
+# MERGE INTO
+
+```sql
 MERGE INTO employees e
     USING hr_records h ON (e.id = h.emp_id)
         WHEN MATCHED THEN
@@ -50,6 +267,7 @@ MERGE INTO employees e
         WHEN NOT MATCHED THEN
             INSERT (id, address) VALUES (h.emp_id, h.address);
 ```
+
 ## UNION
 UNION, UNION ALL, INTERSECT ve MINUS operatörlerini kullanarak birden çok sorguyu birleştirebilirsiniz. Tüm küme operatörleri eşit önceliğe sahiptir. Bir SQL deyimi birden çok küme operatörü içeriyorsa, parantezler açıkça başka bir sıra belirtmedikçe Oracle Database bunları soldan sağa doğru değerlendirir.
 
@@ -168,3 +386,49 @@ SELECT
 FROM EMPLOYEES;
 ```
 > Bilgi: || ifadesi STRING değerleri birleştirmek için kullanılmaktadır.
+
+### SELECT Sorguları
+
+```sql
+-- Her ilçede kaç tane mahalle var?
+SELECT 
+    I.KIMLIKNO "ILCE KIMLIK NO", 
+    I.AD "ILCE ADI", 
+    M.KIMLIKNO "MAHALLE KIMLIK NO", 
+    M.AD "MAHALLE ADI" 
+FROM ILCE I
+    INNER JOIN MAHALLE M ON M.ILCEID = I.ID;
+
+-- Her ilçenin yüz ölçümü nedir?
+SELECT AD, SDO_GEOM.SDO_AREA(SHAPE, 0.005) "YUZ OLCUMU" FROM ILCE;
+
+-- Bursa'daki tüm ilçelerin yüz ölçümü toplamı nedir?
+SELECT SUM(SDO_GEOM.SDO_AREA(SHAPE, 0.005)) "YUZ OLCUMU" FROM ILCE
+
+-- Hangi ilçenin kaç tane mahallesi vardır?
+SELECT  
+    I.AD "ILCE ADI", 
+    COUNT(1)
+FROM ILCE I
+    INNER JOIN MAHALLE M ON M.ILCEID = I.ID
+GROUP BY I.AD;
+
+-- MAKS Yol Gösterim
+SELECT 
+	YOHY.OBJECTID,
+    Y.ID,
+    Y.AD,
+    Y.TIP,
+    I.ID ILCE_ID,
+    I.KIMLIKNO ILCE_KIMLIK_NO,
+    I.AD ILCE_AD,
+    M.ID MAHALLE_ID,
+    M.KIMLIKNO MAHALLE_KIMLIK_NO,
+    M.AD MAHALLE_AD,
+    YOH.SHAPE SHAPE
+FROM ILCE I
+    INNER JOIN MAHALLE M ON I.ID = M.ILCEID
+    INNER JOIN YOLORTAHATYON YOHY ON M.ID = YOHY.MAHALLEID
+    INNER JOIN YOLORTAHAT YOH ON YOHY.YOLORTAHATID = YOH.ID
+    INNER JOIN YOL Y ON YOH.YOLID = Y.ID;
+```
