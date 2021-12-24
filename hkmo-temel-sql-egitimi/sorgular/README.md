@@ -249,11 +249,17 @@ FROM suppliers;
 
 ```sql
 SELECT emp_name, IFNULL(dept_id, 0) dept_id FROM employees; -- MySQL
+```
 
+```sql
 SELECT emp_name, ISNULL(dept_id, 0) dept_id FROM employees; -- SQL Server
+```
 
+```sql
 SELECT emp_name, IsNull(dept_id, 0) dept_id FROM employees; -- MS Access
+```
 
+```sql
 SELECT emp_name, NVL(dept_id, 0) dept_id FROM employees; -- Oracle
 ```
 
@@ -276,7 +282,9 @@ UNION, UNION ALL, INTERSECT ve MINUS operatörlerini kullanarak birden çok sorg
 SELECT OBJECTID, ILCE, MAHALLE, ADA, PARSEL FROM TBL_KADASTRO_01
 UNION
 SELECT OBJECTID, ILCE, MAHALLE, ADA, PARSEL FROM TBL_KADASTRO_02
+```
 
+```sql
 -- Kullanım 2
 SELECT OBJECTID, ILCE, MAHALLE, ADA, PARSEL FROM TBL_KADASTRO_01
 UNION ALL
@@ -304,11 +312,15 @@ FROM ILCE
 -- 1. Kullanım: SELF JOIN ile kullanımı gösterilmiştir.
 SELECT * FROM ADA A, PARSEL P 
 	WHERE SDO_RELATE(A.GEOMETRI,P.GEOMETRI,'MASK=DISJOINT')='TRUE';
+```
 
+```sql
 -- 2. Kullanım: INNER JOIN ile kullanımı gösterilmiştir.
 SELECT * FROM ADA A 
 	INNER JOIN PARSEL P ON SDO_RELATE(A.GEOMETRI,P.GEOMETRI,'MASK=DISJOINT')='TRUE';
+```
 
+```sql
 -- 3. Kullanım: Birden fazla maskelemenin tek sorguda kullanımı gösterilmiştir.
 SELECT * FROM ADA A 
 	INNER JOIN PARSEL P ON SDO_RELATE(A.GEOMETRI,P.GEOMETRI,'MASK=INSIDE+COVEREDBY')='TRUE';
@@ -329,7 +341,9 @@ INITCAP, her kelimenin ilk harfi büyük, diğer tüm harfleri küçük olacak �
 ```sql
 SELECT INITCAP('ingilizce') FROM dual;
 --> Ingilizce
+```
 
+```sql
 SELECT NLS_INITCAP('ingilizce', 'NLS_SORT = XTURKISH') FROM dual;
 --> İngilizce
 ```
@@ -340,7 +354,9 @@ UPPER, tüm harfleri büyük olacak şekilde char değerini döndürür. Türkç
 ```sql
 SELECT UPPER('ingilizce') FROM dual;
 --> INGILIZCE
+```
 
+```sql
 SELECT NLS_UPPER('ingilizce', 'NLS_SORT = XTURKISH') FROM dual;
 --> İNGİLİZCE
 ```
@@ -361,12 +377,16 @@ SELECT
         AS "YOL ADI",
      SHAPE
 FROM YOLORTAHAT ;
+```
 
+```sql
 -- 2. Kullanım: Grup fonksiyon içerinde CASE kullanılabilmektedir.
 SELECT
    COUNT(CASE DEFIN_DURUMU WHEN -1 THEN 0 END) BOS
 FROM PARSEL
+```
 
+```sql
 -- 3. Kullanım: Fonksiyonlar içerisinde CASE yapısı kullanılabilmektedir. Fonksiyon parametreleri girilirken, değer alanına yazılması yeterlidir.
 SELECT 
 	NLS_INITCAP (
@@ -377,7 +397,9 @@ SELECT
 	     END, 'NLS_SORT = XTURKISH') AS "YOL ADI",
      SHAPE
 FROM YOLORTAHAT ;
+```
 
+```sql
 -- 4. Kullanım: Case şartında birden fazla koşul belirtilebilir.
 SELECT 
 	CASE
@@ -398,13 +420,19 @@ SELECT
     M.AD "MAHALLE ADI" 
 FROM ILCE I
     INNER JOIN MAHALLE M ON M.ILCEID = I.ID;
+```
 
+```sql
 -- Her ilçenin yüz ölçümü nedir?
 SELECT AD, SDO_GEOM.SDO_AREA(SHAPE, 0.005) "YUZ OLCUMU" FROM ILCE;
+```
 
+```sql
 -- Bursa'daki tüm ilçelerin yüz ölçümü toplamı nedir?
 SELECT SUM(SDO_GEOM.SDO_AREA(SHAPE, 0.005)) "YUZ OLCUMU" FROM ILCE
+```
 
+```sql
 -- Hangi ilçenin kaç tane mahallesi vardır?
 SELECT  
     I.AD "ILCE ADI", 
@@ -412,7 +440,9 @@ SELECT
 FROM ILCE I
     INNER JOIN MAHALLE M ON M.ILCEID = I.ID
 GROUP BY I.AD;
+```
 
+```sql
 -- MAKS Yol Gösterim
 SELECT 
 	YOHY.OBJECTID,
